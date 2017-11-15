@@ -1,0 +1,1 @@
+/usr/bin/cc -g  -Wl,--enable-auto-import CMakeFiles/Laboratoire.dir/main.c.o  -o Laboratoire.exe -Wl,--out-implib,libLaboratoire.dll.a -Wl,--major-image-version,0,--minor-image-version,0 
