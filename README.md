@@ -5,6 +5,6 @@ Fonctions coded in the shell :
   - Check the encoder return 
   - If no programm running - possibility to clean GPIO 
   - Check the PWM 
- (- Lidar)
+  - ( Lidar)
   - Raspberry CPU - Memory - RAM 
   
