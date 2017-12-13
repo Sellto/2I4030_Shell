@@ -50,10 +50,11 @@ void test1(){
 char * strreplace(char *s,char chr,char repl_chr)
 {
    int i=0;
-   while(i < sizeof(s)/sizeof(*s))
+   while(i < sizeof(s))
    {
-      if(s[i]==chr+'0')
+      if(s[i]==chr)
       {
+	 printf(s[i]);
          s[i]=repl_chr+'0';
       }
          i++;

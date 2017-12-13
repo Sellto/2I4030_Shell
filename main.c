@@ -17,6 +17,8 @@ int rpi_clear(char **args);
 int rpi_help(char **args);
 int rpi_pigpiod_status(char **args);
 
+FILE* outputFile;
+
 //Pointer to the functions
 int (*builtin_func[]) (char **) = {
         &rpi_exit,
@@ -46,9 +48,21 @@ int rpi_num_builtins() {
 int rpi_raspInfo(char **args)
 {
   // /proc/self/status
-  // top
-  system("top");
-    return 1;
+  // Utilisation de la ram - free -h
+  // CPU htop
+
+  // Processor temperature
+  system("cat /sys/class/thermal/thermal_zone0/temp > output.txt");
+  outputFile = fopen("output.txt", "r+");
+  char string[10];
+  fgets(string, 10, outputFile);
+  char *ptr;
+  double ret;
+
+  ret = strtod(string, &ptr);
+  ret = ret/1000;
+  printf("Processor temperature : %.2lf\n", ret);
+  return 1;
 }
 
 
@@ -227,8 +241,9 @@ void rpi_loop(void)
 
 int main(int argc, char **argv)
 {
-    system("clear");
-    rpi_loop();
-    system("clear");
+  system("touch /home/pi/output.txt");
+  system("clear");
+  rpi_loop();
+  system("clear");
   return EXIT_SUCCESS;
 }

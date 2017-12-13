@@ -49,10 +49,8 @@ int rpi_raspInfo(char **args)
     // /proc/self/status
     // Utilisation de la ram - free -h
     // CPU htop
-    // Temperature
-    // $ /opt/vc/bin/vcgencmd measure_temp
-    // $ cat /sys/class/thermal/thermal_zone0/temp
 
+    // Processor temperature
     system("cat /sys/class/thermal/thermal_zone0/temp > output.txt");
     outputFile = fopen("output.txt", "r+");
     char string[10];
@@ -65,7 +63,6 @@ int rpi_raspInfo(char **args)
     printf("Processor temperature : %.2lf\n", ret);
     return 1;
 }
-
 
 int rpi_hello(char **args)
 {
