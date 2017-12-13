@@ -15,6 +15,7 @@ int rpi_hello(char **args);
 int rpi_raspInfo(char **args);
 int rpi_clear(char **args);
 int rpi_help(char **args);
+int rpi_pigpiod_status(char **args);
 
 //Pointer to the functions
 int (*builtin_func[]) (char **) = {
@@ -22,7 +23,8 @@ int (*builtin_func[]) (char **) = {
         &rpi_hello,
         &rpi_raspInfo,
         &rpi_clear,
-        &rpi_help
+        &rpi_help,
+        &rpi_pigpiod_status
 };
 
 // Function "string call"
@@ -31,7 +33,8 @@ char *builtin_str[] = {
         "hello",
         "rasp",
         "cls",
-        "help"
+        "help",
+        "pigpio"
 };
 
 int rpi_num_builtins() {
@@ -48,6 +51,9 @@ int rpi_raspInfo(char **args)
     return 1;
 }
 
+
+
+
 int rpi_hello(char **args)
 {
   printf("Hello World ! \n");
@@ -63,6 +69,23 @@ int rpi_clear(char **args)
 int rpi_help(char **args)
 {
     printf("Help\n");
+    return 1;
+}
+
+int rpi_pigpiod_status(char **args)
+{
+    if (args[1] == NULL) {
+        printf("noargument\n");
+    } else {
+       if (! strncmp(args[1], "-s",2))
+       {
+           printf("valid\n");
+       }
+       else
+       {
+           fprintf(stderr, "Invalid Argument\n");
+       }
+    }
     return 1;
 }
 
