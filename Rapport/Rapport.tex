@@ -1,0 +1,111 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+\usepackage{PersonalPackage}
+\usepackage{hyperref}
+
+\usepackage{titling}
+\def\@subtitle{no title}
+\newcommand{\subtitle}[1]{\def\@subtitle{#1}}
+
+\title{Laboratoire de système d'exploitation}
+\subtitle{Création d'un shell}
+
+\author{
+ALBERT Emile 14022@ecam.be\\\\
+HAGOPIAN Armen 14040@ecam.be\\\\
+SELLESLAGH Tom 14164@ecam.be\\\\
+}
+
+\begin{document}
+\begin{titlepage} 
+	\hspace{0.5cm}	
+	\rule{1.5pt}{\textheight} 
+	\hspace{1.5cm}		
+	\parbox[b]{13cm}
+	{  		
+		{\huge \thetitle}\\[1\baselineskip]
+		{\LARGE \@subtitle} \\[1\baselineskip]
+		\today \\[3\baselineskip]
+		
+		{\Large \theauthor}\\[22\baselineskip]
+		\hspace*{6cm}\includegraphics[scale=0.3]{logo_ECAM.png}
+	}
+\end{titlepage}
+
+\section{Introduction}
+Les objectifs de ce laboratoire étaient de penser et d'implémenter un shell. Notre groupe étant composé de trois électroniciens, tout trois participant au projet Eurobot, nous avons décidé de profité de ce laboratoire pour créer une interface système permettant nous permettant de monitorer les tests sur un robot commandé par une raspberry pi.\\
+  
+Le but de ce shell est donc de pouvoir observer lors de l'exécution d'un test de commande moteur sur la raspberry, un maximum d'information intéressante sur l'état du contrôleur. L'interface système devient alors une aide au debuging des programmes s'exécutant sur la raspberry.
+
+\section{Implémentation}
+\subsection{L'environnement du shell}
+La structure du shell tel que nous l'avons utilisée dans ce projet a été repris du code crée par Stephen Brennan sur son compte Github : \url{https://github.com/brenns10/lsh}\\
+
+La structure du shell peut être vue en plusieurs sections :
+\begin{itemize}
+\item La déclaration des fonctions de l'interface, des pointeurs vers ces fonctions et des noms d'appel
+\item L'implémentation des fonctionnalités
+\item Le c\oe{}ur du shell 
+\end{itemize}
+
+\subsubsection{Déclaration des fonctions de l'interface, des pointeurs et des noms d'appel}
+Dans cette partie de configuration, il s'agit de déclarer les variables associées aux fonctions utilisées dans le programme.\\
+
+\textbf{pointeur?}\\
+
+De plus, on définis les noms d'appel des fonctions. Ces nom seront ceux utilisé par l'utilisateur pour invoquer telle ou telle fonction
+
+\subsubsection{Implémentation des fonctions}
+Cette partie regroupe l'ensemble des fonctions appelée lors d'une commande utilisateur. Les fonctions propres à notre projet sont donc codée dans cette section ainsi que les commandes propres au shell (\texttt{help, clear, exit})
+
+\subsubsection{Coeur du shell}
+Enfin, la dernière partie de la structure est composée des 6 fonctions requises au bon fonctionnement du shell. Ces 6 fonctions sont : 
+\begin{itemize}
+\item \texttt{rpi\_launch} - Lancement du shell\\
+
+\item \texttt{rpi\_execute} - 
+
+\item \texttt{rpi\_read\_line} - Lecture des commandes user\\
+
+\item \texttt{rpi\_split\_line} - Décryptage des commandes user\\
+
+\item \texttt{rpi\_loop} - Super loop d'exécution\\
+
+\item \texttt{main} - Fonction principal du programme\\
+
+\end{itemize}
+
+\subsection{Les commandes implémentées}
+\subsubsection{\texttt{rpi\_raspInfo} invoqué avec \texttt{rasp}}
+La commande \texttt{rasp} permet de récupérer des informations sur le hardware de la raspberry. Ces données peuvent être utiles tant pour le \textit{debuging} que pour l'optimisation des performances d'un programme. 
+
+\begin{itemize}
+\item \texttt{rasp -t -c ou -f} permet de récupérer la température du processeur en degré celsius ou farenheit
+
+\item \texttt{rasp -cpu} permet de récupérer l'utilisation du CPU au temps t
+
+\item \texttt{rasp -ram} permet de connaitre l'utilisation de la mémoire RAM 
+\end{itemize}
+
+\textbf{Appels systèmes\\}
+Un appel système est une fonction primitive fournie par le noyau d'un système d'exploitation et utilisée par les programmes s'exécutant dans l'espace utilisateur (en d'autres termes, tous les processus distincts du noyau). Ce système permet de contrôler de façon sécurisée les applications dans l'espace utilisateur.
+
+\subsection{Script de compilation}
+La compilation du code source écrit en C s'effectue sur la raspberry même. La commande \url{gcc} permet de créer un fichier ELF, exécutable sur le contrôleur. 
+
+\section{Discussion}
+\begin{center}
+\textbf{Un interpréteur de commandes peut exécuter les commandes lui-même ou déléguer cette exécution à d'autres exécutables. Quels sont les avantages et inconvénients de ces deux possibilités ?}\end{center}
+
+\begin{center}
+\textbf{Pour interagir avec le hardware et le système d'exploitation, on peut utiliser un appel système, une  fonction  de  la  librairie  standard  C  ou  passer  par  un  programme  système.  Quels  sont  les avantages et inconvénients de ces trois possibilités ?}
+\end{center}
+
+\end{document}
