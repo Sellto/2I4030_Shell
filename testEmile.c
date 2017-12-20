@@ -52,7 +52,8 @@ int rpi_raspInfo(char **args)
     }
 
     else {
-        if (args[1] == "-t" ) {
+        // Option
+        if (!strncmp(args[1], "-t",2)){
             // Get processor temperature
             system("cat /sys/class/thermal/thermal_zone0/temp > output.txt");
             outputFile = fopen("output.txt", "r+");
@@ -63,40 +64,37 @@ int rpi_raspInfo(char **args)
             ret = strtod(string, &ptr);
             ret = ret / 1000;
 
-            if (args[2] == NULL || args[2] == "-c") {
-                printf("Processor temperature : %.2lf\n °C", ret);
+            // Parameters
+            if (args[2] == NULL || !strncmp(args[2], "cel",3)) {
+                printf(" Processor temperature : %.2lf °C\n\n", ret);
             }
 
-            if (args[2] == "-f") {
+            if (!strncmp(args[2], "far",3)) {
                 double retf = ret * 1.8 + 32;
-                printf("Processor temperature : %.2lf\n °F", retf);
+                printf(" Processor temperature : %.2lf °F\n\n", retf);
+            }
+
+            if (!strncmp(args[2], "kel",3)) {
+                double retk = ret + 273.15;
+                printf(" Processor temperature : %.2lf °K\n\n", retk);
             }
         }
 
-        if (args[1] == "-ram") {
-        // Get RAM usage
-            // /proc/self/status
-            // Utilisation de la ram - free -h
-            //http://mtodorovic.developpez.com/linux/programmation-avancee/?page=page_8#L8-14
-            // sysinfo
-            printf("Display RAM usage");
-        }
-
-        if (args[1] == "-cpu"){
-        // Get CPU usage
-            // CPU htop
-            // printcputime
-            // https://www.it-connect.fr/recuperer-lutilisation-cpu-dun-processus-sous-linux/
-            printf("Display CPU usage");
+        if (!strncmp(args[1], "-ram",4)) {
+            system("free -m | awk 'NR==2{printf \" RAM load : %.2f%%\\n\\n\", $3*100/$2 }'");
 
         }
 
-        if (args[1] == "-help"){
+        if (!strncmp(args[1], "-cpu",4)){
+            system("top -bn1 | awk '/Cpu/ { cpu = \" CPU load :  \" 100 - $8 \"%\\n\" }; END   { print cpu }'");
+
+        }
+
+        if (!strncmp(args[1], "-h",2)){
             char str[128];
-            strcat(str, "rasp -t -c | temp processor in degree celsius\n");
-            strcat(str, "rasp -t -f | temp processor in degree farenheit\n");
-            strcat(str, "rasp -cpu  | CPU usage\n");
-            strcat(str, "rasp -ram  | RAM usage\n");
+            strcat(str, " rasp -t [PARAM] | temp processor [PARAM] = Unity of temperature cel / far /kel\n");
+            strcat(str, " rasp -cpu       | CPU usage\n");
+            strcat(str, " rasp -ram       | RAM usage\n");
 
             printf(str);
         }
@@ -226,7 +224,7 @@ char *rpi_read_line(void)
 }
 
 
-    //"Decode" the user entry.
+//"Decode" the user entry.
 #define rpi_TOK_BUFSIZE 64
 #define rpi_TOK_DELIM " \t\r\n\a"
 char **rpi_split_line(char *line)

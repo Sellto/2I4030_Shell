@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <unistd.h>
 
 //int main()
 //{
@@ -57,19 +58,32 @@ void test1(){
     	x /= 10;
     	} while (x); // keep going until x reaches zero
 
-
+	strcpy(str, "gpio");
+	strcat(str, result);
+	strcat(str, " : ");
+	printf("%s", str);
+	fflush(stdout);
 	strcpy(str, "echo ");
-	printf("%s",result);
-	printf("\n%d\n", j);
+//	printf("%s",result);
+//	printf("\n%d\n", j);
 	strcat(str, result);
 	strcat(str, " > /sys/class/gpio/export");
-	printf("\n%s", str);
+//	printf("\n%s", str);
+	//Check if path exists
+	if( access( str, F_OK ) != -1 ) {
+    	// file exists
+	}
+else{
 	system(str);
+
+}
 	strcpy(str, "cat ");
-	strcat(str, "> /sys/class/gpio");
+	strcat(str, "/sys/class/gpio/gpio");
 	strcat(str, result);
 	strcat(str, "/value");
 	system(str);
+//	printf("\n%s", str);
+
     }
 
 //    printf("\nHello, World!");

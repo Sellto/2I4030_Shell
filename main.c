@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <limits.h>
 
 
 // Function Declarations
@@ -21,21 +21,21 @@ FILE* outputFile;
 
 //Pointer to the functions
 int (*builtin_func[]) (char **) = {
+        &rpi_help,
+        &rpi_clear,
         &rpi_exit,
         &rpi_hello,
         &rpi_raspInfo,
-        &rpi_clear,
-        &rpi_help,
         &rpi_pigpiod_status
 };
 
 // Function "string call"
 char *builtin_str[] = {
+        "help",
+        "cls",
         "exit",
         "hello",
         "rasp",
-        "cls",
-        "help",
         "pigpio"
 };
 
@@ -47,21 +47,59 @@ int rpi_num_builtins() {
 //Functions implementation.
 int rpi_raspInfo(char **args)
 {
-  // /proc/self/status
-  // Utilisation de la ram - free -h
-  // CPU htop
+  if (args[1] == NULL) {
+    fprintf(stderr, "rasp command waits for argument, type -help for help");
+  }
 
-  // Processor temperature
-  system("cat /sys/class/thermal/thermal_zone0/temp > output.txt");
-  outputFile = fopen("output.txt", "r+");
-  char string[10];
-  fgets(string, 10, outputFile);
-  char *ptr;
-  double ret;
+  else {
+    // Option
+    if (!strncmp(args[1], "-t",2)){
+      // Get processor temperature
+      system("cat /sys/class/thermal/thermal_zone0/temp > output.txt");
+      outputFile = fopen("output.txt", "r+");
+      char string[10];
+      fgets(string, 10, outputFile);
+      char *ptr;
+      double ret;
+      ret = strtod(string, &ptr);
+      ret = ret / 1000;
 
-  ret = strtod(string, &ptr);
-  ret = ret/1000;
-  printf("Processor temperature : %.2lf\n", ret);
+      // Parameters
+      if (args[2] == NULL || !strncmp(args[2], "cel",3)) {
+        printf(" Processor temperature : %.2lf °C\n\n", ret);
+      }
+
+      if (!strncmp(args[2], "far",3)) {
+        double retf = ret * 1.8 + 32;
+        printf(" Processor temperature : %.2lf °F\n\n", retf);
+      }
+
+      if (!strncmp(args[2], "kel",3)) {
+        double retk = ret + 273.15;
+        printf(" Processor temperature : %.2lf °K\n\n", retk);
+      }
+    }
+
+    if (!strncmp(args[1], "-ram",4)) {
+      system("free -m | awk 'NR==2{printf \" RAM load : %.2f%%\\n\\n\", $3*100/$2 }'");
+
+    }
+
+    if (!strncmp(args[1], "-cpu",4)){
+      system("top -bn1 | awk '/Cpu/ { cpu = \" CPU load :  \" 100 - $8 \"%\\n\" }; END   { print cpu }'");
+
+    }
+
+    if (!strncmp(args[1], "-h",2)){
+      char str[128];
+      strcat(str, " rasp -t [PARAM] | temp processor [PARAM] = Unity of temperature cel / far /kel\n");
+      strcat(str, " rasp -cpu       | CPU usage\n");
+      strcat(str, " rasp -ram       | RAM usage\n");
+
+      printf(str);
+    }
+  }
+
   return 1;
 }
 
@@ -80,26 +118,97 @@ int rpi_clear(char **args)
     return 1;
 }
 
+#define KWHI  "\x1B[97m"
+#define RESET "\x1B[0m"
 int rpi_help(char **args)
 {
-    printf("Help\n");
-    return 1;
+
+  char c;
+  int i;
+
+    char str[1024];
+    strcpy(str, " RPI SHELL Help\n");
+    printf("%s",str);
+    char *t[] = {NULL,"-h"};
+  for (i = 4; i < rpi_num_builtins(); i++) {
+
+      printf(KWHI"\n %s \n"RESET,builtin_str[i]);
+      (*builtin_func[i])(t);
+    }
+    strcpy(str,"\n by E. Albert, A. Hagopian and T. Selleslagh");
+    strcat(str,"\n inspired by the work of S.Brennan.\n");
+    printf("%s",str);
+  return 1;
 }
 
+// returns the state of each gpio pin
 int rpi_pigpiod_status(char **args)
 {
-    if (args[1] == NULL) {
-        printf("noargument\n");
-    } else {
-       if (! strncmp(args[1], "-s",2))
-       {
-           printf("valid\n");
-       }
-       else
-       {
-           fprintf(stderr, "Invalid Argument\n");
-       }
+    if (args[1] != NULL) {
+        // help for the user
+        if (! strncmp(args[1], "-h",2))
+        {
+            printf(" pigpio allows you to see the state of each pin\n");
+            return 1;
+        }
     }
+
+    char str[100];
+
+    for(int j=0; j < 26; j++)
+    {
+
+        int x = j;
+
+        // slightly oversize buffer
+        char buf[(sizeof(x) * CHAR_BIT) / 3 + 2];
+
+        // index of next output digit
+        char *result  = buf + sizeof(buf) - 1;
+
+        // add digits to result, starting at
+        // the end (least significant digit)
+
+        *result = '\0'; // terminating null
+        do {
+            // remainder gives the next digit
+            *--result = '0' + (x % 10);
+            x /= 10;
+            // keep going until x reaches zero
+            } while (x);
+
+        strcpy(str, " gpio");
+        // add the integer to the string
+        strcat(str, result);
+        // make the displayed string nicer
+        if(j < 10)
+        {
+            strcat(str, "  : ");
+        }
+        else{
+            strcat(str, " : ");
+        }
+        // print the gpio pin number before its state
+        printf("%s", str);
+        fflush(stdout);
+        strcpy(str, "echo ");
+        strcat(str, result);
+        strcat(str, " > /sys/class/gpio/export");
+        // check if path exists
+        if( access( str, F_OK ) != -1 ) {
+            // file doesn't exist
+            // so we create the gpio pin
+            system(str);
+        }
+        strcpy(str, "cat ");
+        strcat(str, "/sys/class/gpio/gpio");
+        strcat(str, result);
+        strcat(str, "/value");
+        // reads the pin state
+        system(str);
+
+    }
+
     return 1;
 }
 
@@ -119,7 +228,7 @@ int rpi_launch(char **args)
     if (execvp(args[0], args) == -1) {
       perror("rpi");
     }
-    exit(EXIT_FAILURE);
+    _exit(EXIT_FAILURE);
   } else if (pid < 0) {
     // Error forking
     perror("rpi");
@@ -159,14 +268,14 @@ char *rpi_read_line(void)
   int c;
   if (!buffer) {
     fprintf(stderr, "rpi: allocation error\n");
-    exit(EXIT_FAILURE);
+    _exit(EXIT_FAILURE);
   }
 
   while (1) {
     // Read a character
     c = getchar();
     if (c == EOF) {
-      exit(EXIT_SUCCESS);
+      _exit(EXIT_SUCCESS);
     } else if (c == '\n') {
       buffer[position] = '\0';
       return buffer;
@@ -181,7 +290,7 @@ char *rpi_read_line(void)
       buffer = realloc(buffer, bufsize);
       if (!buffer) {
         fprintf(stderr, "rpi: allocation error\n");
-        exit(EXIT_FAILURE);
+        _exit(EXIT_FAILURE);
       }
     }
   }
@@ -198,7 +307,7 @@ char **rpi_split_line(char *line)
   char *token, **tokens_backup;
   if (!tokens) {
     fprintf(stderr, "rpi: allocation error\n");
-    exit(EXIT_FAILURE);
+    _exit(EXIT_FAILURE);
   }
   token = strtok(line, rpi_TOK_DELIM);
   while (token != NULL) {
@@ -211,7 +320,7 @@ char **rpi_split_line(char *line)
       if (!tokens) {
         free(tokens_backup);
         fprintf(stderr, "rpi: allocation error\n");
-        exit(EXIT_FAILURE);
+        _exit(EXIT_FAILURE);
       }
     }
     token = strtok(NULL, rpi_TOK_DELIM);
