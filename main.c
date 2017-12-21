@@ -96,7 +96,7 @@ int rpi_raspInfo(char **args)
       strcat(str, " rasp -cpu       | CPU usage\n");
       strcat(str, " rasp -ram       | RAM usage\n");
 
-      printf(str);
+      printf"%s",str);
     }
   }
 
