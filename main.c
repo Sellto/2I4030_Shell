@@ -123,16 +123,17 @@ int rpi_clear(char **args)
 int rpi_help(char **args)
 {
 
-  char c;
-  int i;
-
+    char c;
+    int i;    
     char str[1024];
     strcpy(str, " RPI SHELL Help\n");
     printf("%s",str);
+    //Create a list to send the option -h into each functions.
     char *t[] = {NULL,"-h"};
-  for (i = 4; i < rpi_num_builtins(); i++) {
-
+    for (i = 4; i < rpi_num_builtins(); i++) {
+      //Display the functions name 
       printf(KWHI"\n %s \n"RESET,builtin_str[i]);
+      //execute the function with args[1] = -h
       (*builtin_func[i])(t);
     }
     strcpy(str,"\n by E. Albert, A. Hagopian and T. Selleslagh");
