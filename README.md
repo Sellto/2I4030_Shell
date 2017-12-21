@@ -1,9 +1,7 @@
-Shell to control and check movement action on raspberry Pi 
+Shell to control the raspberry Pi 
+
 Fonctions coded in the shell : 
   
   - Check the GPIO setup 
-  - Check the encoder return 
-  - Check the PWM 
-  - ( Lidar)
-  - Raspberry CPU - Memory - RAM 
-  
+  - Raspberry CPU - Memory - RAM status
+  - Rapsberry CPU temperature diplaying 
