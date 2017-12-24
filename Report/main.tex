@@ -40,15 +40,15 @@ SELLESLAGH Tom 14164@ecam.be\\\\
 \end{titlepage}
 
 \section{Introduction}
-Les objectifs de ce laboratoire étaient de penser et d'implémenter un shell. Notre groupe étant composé de trois électroniciens, tout trois participant au projet Eurobot, nous avons décidé de profité de ce laboratoire pour créer une interface système permettant de monitorer les tests sur un robot commandé par une raspberry pi.\\
+Les objectifs de ce laboratoire étaient de penser et d'implémenter un shell. Notre groupe étant composé de trois électroniciens, tout trois participant au projet Eurobot, nous avons décidé de profiter de ce laboratoire pour créer une interface système permettant de monitorer les tests sur un robot commandé par une raspberry pi.\\
   
-Le but de ce shell est donc de pouvoir observer lors de l'exécution d'un test de commande moteur sur la raspberry, un maximum d'information intéressante sur l'état du contrôleur. L'interface système devient alors une aide au debuging des programmes s'exécutant sur la raspberry.
+Le but de ce shell est donc de pouvoir observer lors de l'exécution d'un test de commande moteur sur la raspberry, un maximum d'informations intéressantes sur l'état du contrôleur. L'interface système devient alors une aide au debugging des programmes s'exécutant sur la raspberry.
 
 Le code complet de notre solution est disponible sur github:
 \url{https://github.com/EmileAlbert/2I4030_Shell}
 \section{Implémentation}
 \subsection{L'environnement du shell}
-La structure du shell tel que nous l'avons utilisée dans ce projet a été repris du code crée par Stephen Brennan sur son compte Github : \url{https://github.com/brenns10/lsh}\\
+La structure du shell telle que nous l'avons utilisée dans ce projet a été reprise du code créé par Stephen Brennan sur son compte Github : \url{https://github.com/brenns10/lsh}\\
 
 La structure du shell peut être vue en plusieurs sections :
 \begin{itemize}
@@ -60,25 +60,25 @@ La structure du shell peut être vue en plusieurs sections :
 \subsubsection{Déclaration des fonctions de l'interface, des pointeurs et des noms d'appel}
 Dans cette partie de configuration, il s'agit de déclarer les variables associées aux fonctions utilisées dans le programme ainsi que leur pointeur.\\
 
-De plus, on définis les noms d'appel des fonctions. Ces nom correspondent aux chaine de caractère utilisée par l'utilisateur pour invoquer telle ou telle fonction.
+De plus, on définit les noms d'appel des fonctions. Ces noms correspondent aux chaînes de caractères utilisées par l'utilisateur pour invoquer telle ou telle fonction.
 
 \subsubsection{Implémentation des fonctions}
-Cette partie regroupe l'ensemble des fonctions appelée lors d'une commande utilisateur. Les fonctions propres à notre projet sont donc codée dans cette section ainsi que les commandes propres au shell (\texttt{help, clear, exit})
+Cette partie regroupe l'ensemble des fonctions appelées lors d'une commande utilisateur. Les fonctions propres à notre projet sont donc codées dans cette section ainsi que les commandes propres au shell (\texttt{help, clear, exit})
 
 \subsubsection{Coeur du shell}
 Enfin, la dernière partie de la structure est composée des 6 fonctions requises au bon fonctionnement du shell. Ces 6 fonctions sont : 
 \begin{itemize}
 \item \texttt{rpi\_launch} - Lancement du shell\\
-Fork du programme principal et gestion des enfants crée
+Fork du programme principal et gestion des enfants créés
 
 \item \texttt{rpi\_execute} - Exécution des fonctions\\
-Cette section lance les fonctions correspondantes au l'entrée de l'utilisateur
+Cette section lance les fonctions correspondantes à l'entrée de l'utilisateur
 
 \item \texttt{rpi\_read\_line} - Lecture des commandes user\\
-Fonction récupérant la chaine de caractère entrée par l'utilisateur
+Fonction récupérant la chaîne de caractères entrée par l'utilisateur
 
 \item \texttt{rpi\_split\_line} - Décryptage des commandes user\\
-Fonction servant à décrypter et à conditionner les entrées de l'utilisateur pour que ses commandes soient comprise
+Fonction servant à décrypter et à conditionner les entrées de l'utilisateur pour que ses commandes soient comprises
 
 \item \texttt{rpi\_loop} - Super loop d'exécution\\
 C'est la partie principale du programme qui appelle les fonctions nécessaires au shell en boucle
@@ -89,9 +89,9 @@ Script qui lance la boucle et donc le shell
 
 \subsection{Les commandes implémentées}
 \subsubsection{\texttt{rpi\_raspInfo} invoqué avec \texttt{rasp}}
-La commande \texttt{rasp} permet de récupérer des informations sur le hardware de la raspberry. Ces données peuvent être utiles tant pour le \textit{debuging} que pour l'optimisation des performances d'un programme.\\
+La commande \texttt{rasp} permet de récupérer des informations sur le hardware de la raspberry. Ces données peuvent être utiles tant pour le \textit{debugging} que pour l'optimisation des performances d'un programme.\\
 
-La fonction prend obligatoirement en paramètre l'information désirée. Les différentes informations disponible dans la fonctions sont les suivantes :
+La fonction prend obligatoirement en paramètre l'information désirée. Les différentes informations disponible dans la fonction sont les suivantes :
 
 \begin{itemize}
 \item \texttt{rasp -t [PARAM]} permet de récupérer la température du processeur\\
@@ -113,10 +113,10 @@ La commande prend obligatoirement en paramètre l'unité dans laquelle on veut r
 La commande \texttt{pigpio} permet de lister les pins gpio de la raspberry et également d'afficher l'état de chacune d'elles. La commande est uniquement compatible avec des raspberry possédant 26 pins gpio étant donné que cette commande s'attend à en trouver 26.
 
 \subsubsection{\texttt{rpi\_help} invoqué avec \texttt{help}}
-La commande \texttt{help} peut être vu comme un récapitulatif global de toutes les fonctions. Elle affiche le contexte d'utilisation et les résultats attendu de la plupart des coommandes. On notera que la fonction \textbf{help} se mettra automatiquement à jour lorsque l'on rajoute une nouvelle commande qui possèdent l'option \textbf{-h}  
+La commande \texttt{help} peut être vue comme un récapitulatif global de toutes les fonctions. Elle affiche le contexte d'utilisation et les résultats attendus de la plupart des commandes. On notera que la fonction \textbf{help} se mettra automatiquement à jour lorsque l'on rajoute une nouvelle commande qui possède l'option \textbf{-h}  
 \subsection{Appels systèmes utilisés}
 \subsubsection{\texttt{fork}}
-Cet appel système est utilisé dans le script du shell pour créer un processus enfant gérant la commande et l'exécution de la fonctions demandée. 
+Cet appel système est utilisé dans le script du shell pour créer un processus enfant gérant la commande et l'exécution de la fonction demandée. 
 
 \subsubsection{\texttt{open}}
 Cet appel est utilisé dans la fonction \texttt{rasp} et plus précisément pour récupérer la valeur de la température inscrite plus tôt dans un ficher texte. 
@@ -133,7 +133,7 @@ Pour créer notre Fichier ELF, un fichier Makefile a été créé. Celui-ci util
 \textbf{Délégation à un autre exécutable\\}
 Avantages :
 \begin{itemize}
-\item Le shell délégant l'exécution des tâches à ses processus enfant ne crash si le processeur crash à cause de la commande ou retourne une erreur 
+\item Le shell délégant l'exécution des tâches à ses processus enfant ne crash pas si le processeur crash à cause de la commande ou retourne une erreur 
 
 \item Possibilité de faire plusieurs tâches simultanément en plaçant les enfants en arrière plan
 
@@ -147,7 +147,7 @@ Inconvénients :
 \item Plus grand espace requis
 \end{itemize}
 
-Les avantages de la méthode \textit{fork} sont les désavantages de la méthode de la méthode où l'interpréteur de commande exécute lui même les commandes et inversement. Dans notre interpréteur de commande, nous avons utilisé la méthode \textit{fork}. 
+Les avantages de la méthode \textit{fork} sont les désavantages de la méthode où l'interpréteur de commandes exécute lui même les commandes et inversement. Dans notre interpréteur de commandes, nous avons utilisé la méthode \textit{fork}. 
 
 \subsection*{Pour interagir avec le hardware et le système d'exploitation, on peut utiliser un appel système, une  fonction  de  la  librairie  standard  C  ou  passer  par  un  programme  système.  Quels  sont  les avantages et inconvénients de ces trois possibilités ?}
 
@@ -168,13 +168,13 @@ Avantages :
 \begin{itemize}
 \item Portable car peu volumineux grâce à l'implémentation de fonctions uniquement élémentaires (léger en comparaison de java par exemple)
 
-\item Facilite la création de programme dû à l'abstraction proposée
-\item Empêche de causé des erreurs dans l'OS suite à d'éventuelles erreurs de la part de l'utilisateur
+\item Facilite la création de programmes dû à l'abstraction proposée
+\item Empêche de causer des erreurs dans l'OS suite à d'éventuelles erreurs de la part de l'utilisateur
 \end{itemize}
 
 Inconvénients :
 \begin{itemize}
-\item Les fonctions fournies pas les libraires restent dans le \textit{userspace} et ne peuvent donc pas interagir avec le \textit{hardware}
+\item Les fonctions fournies par les libraires restent dans le \textit{userspace} et ne peuvent donc pas interagir avec le \textit{hardware}
 
 \item Le temps d'exécution peut aussi être allongé dans le cas où la fonction utilise des appels systèmes (nécessaire pour exécuter certaines tâches)
 \end{itemize}
@@ -192,5 +192,5 @@ Inconvénient :
 \end{itemize}
 
 \subsubsection{Utilisation}
-Notre implémentation du shell repose essentiellement sut l'utilisation des fonctions proposée par le librairie standard C. Cette méthode nous permet de ne pas exécuter des tâches avec des permissions élevée si cela n'est pas nécessaire. De plus, notre code étant conçu pour s'exécuter en parallèle d'un programme, limiter les appels systèmes permet donc de limiter le temps d'exécution. 
+Notre implémentation du shell repose essentiellement sur l'utilisation des fonctions proposées par le librairie standard C. Cette méthode nous permet de ne pas exécuter des tâches avec des permissions élevée si cela n'est pas nécessaire. De plus, notre code étant conçu pour s'exécuter en parallèle d'un programme, limiter les appels systèmes permet donc de limiter le temps d'exécution. 
 \end{document}
