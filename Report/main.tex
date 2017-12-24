@@ -123,6 +123,8 @@ Cet appel est utilisé dans la fonction \texttt{rasp} et plus précisément pour
 
 \subsubsection{\texttt{\_exit}}
 
+\subsection{Gestion des erreurs}
+Les erreurs générées par une mauvaise entrée de l'utilisateur sont gérées dans le code de base de notre \textit{shell}. Un mauvaise entrée n'aura pas pour conséquence l'arrêt du programme mais provoquera simplement un message d'alerte. Le code est donc robuste et ne risque pas de planter durant l'utilisation. 
 
 \subsection{Script de compilation}
 Pour créer notre Fichier ELF, un fichier Makefile a été créé. Celui-ci utilise principalement le programme \texttt{gcc} pour compiler le fichier \texttt{main.c}. 
